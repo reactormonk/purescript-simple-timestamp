@@ -9,6 +9,7 @@ import Data.Formatter.DateTime (Formatter, FormatterCommand(..), format, unforma
 import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.List (fromFoldable)
+import Data.Newtype (class Newtype)
 import Foreign (ForeignError(..))
 import Simple.JSON (class ReadForeign, class WriteForeign, readImpl, writeImpl)
 
@@ -45,5 +46,6 @@ instance writeTimestamp :: WriteForeign Timestamp where
     writeImpl $ format iso8601Format dt
 
 derive instance genericTimestamp :: Generic Timestamp _
+derive instance newtypeTimestamp :: Newtype Timestamp _
 instance showTimestamp :: Show Timestamp where
   show = genericShow
