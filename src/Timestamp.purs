@@ -10,6 +10,8 @@ import Data.Generic.Rep (class Generic)
 import Data.Generic.Rep.Show (genericShow)
 import Data.List (fromFoldable)
 import Data.Newtype (class Newtype)
+import Effect.Class (class MonadEffect, liftEffect)
+import Effect.Now (nowDateTime)
 import Foreign (ForeignError(..))
 import Simple.JSON (class ReadForeign, class WriteForeign, readImpl, writeImpl)
 
@@ -49,3 +51,6 @@ derive instance genericTimestamp :: Generic Timestamp _
 derive instance newtypeTimestamp :: Newtype Timestamp _
 instance showTimestamp :: Show Timestamp where
   show = genericShow
+
+nowTimestamp :: ∀ m. MonadEffect m => m Timestamp
+nowTimestamp = liftEffect $ Timestamp <$> nowDateTime
