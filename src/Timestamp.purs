@@ -44,8 +44,7 @@ instance readTimestamp :: ReadForeign Timestamp where
       Left e -> throwError $ pure $ ForeignError e
 
 instance writeTimestamp :: WriteForeign Timestamp where
-  writeImpl (Timestamp dt) =
-    writeImpl $ format iso8601Format dt
+  writeImpl = writeImpl <<< printTimestamp
 
 derive instance genericTimestamp :: Generic Timestamp _
 derive instance newtypeTimestamp :: Newtype Timestamp _
@@ -54,3 +53,6 @@ instance showTimestamp :: Show Timestamp where
 
 nowTimestamp :: ∀ m. MonadEffect m => m Timestamp
 nowTimestamp = liftEffect $ Timestamp <$> nowDateTime
+
+printTimestamp :: Timestamp -> String
+printTimestamp (Timestamp dt) = format iso8601Format dt
