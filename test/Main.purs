@@ -34,6 +34,12 @@ main = launchAff_ do
               ms <- (toEnum 862)
               pure $ (Timestamp (DateTime (canonicalDate y July d) (Time h m s ms)))
         (runExcept $ readImpl (write "2018-07-12T12:58:10.862Z")) `shouldEqual` (Right ts)
+
+      let roundtrip e =
+            runExcept $ do
+              w <- writeImpl <$> (readImpl (write e) :: _ Timestamp)
+              readImpl w
+
       it "should roundtrip a few timestamps from nakadi" do
         let
           timestamps =
@@ -44,8 +50,16 @@ main = launchAff_ do
             , "2018-07-12T12:58:10.862Z"
             , "2019-07-04T07:43:48.398Z"
             ]
-          roundtrip e =
-            runExcept $ do
-              w <- writeImpl <$> (readImpl (write e) :: _ Timestamp)
-              readImpl w
         traverse_ (\e -> (Right e) `shouldEqual` (roundtrip e)) timestamps
+      it "should parse timestamps without millis" do
+        let
+          timestamps =
+            [ "2019-06-27T14:36:51Z"
+            , "2019-06-04T00:31:05Z"
+            ]
+          result =
+            [ "2019-06-27T14:36:51.000Z"
+            , "2019-06-04T00:31:05.000Z"
+            ]
+          actual = map roundtrip timestamps
+        actual `shouldEqual` (map Right result)
