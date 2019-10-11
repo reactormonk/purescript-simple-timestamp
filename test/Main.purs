@@ -58,8 +58,56 @@ main = launchAff_ do
             , "2019-06-04T00:31:05Z"
             ]
           result =
-            [ "2019-06-27T14:36:51.000Z"
-            , "2019-06-04T00:31:05.000Z"
+            [ "2019-06-27T14:36:51Z"
+            , "2019-06-04T00:31:05Z"
+            ]
+          actual = map roundtrip timestamps
+        actual `shouldEqual` (map Right result)
+      it "should parse timestamps with 1 digit millis" do
+        let
+          timestamps =
+            [ "2019-06-27T14:36:51.2Z"
+            , "2019-06-04T00:31:05.9Z"
+            ]
+          result =
+            [ "2019-06-27T14:36:51.2Z"
+            , "2019-06-04T00:31:05.9Z"
+            ]
+          actual = map roundtrip timestamps
+        actual `shouldEqual` (map Right result)
+      it "should parse timestamps with 2 digit millis" do
+        let
+          timestamps =
+            [ "2019-06-27T14:36:51.22Z"
+            , "2019-06-04T00:31:05.99Z"
+            ]
+          result =
+            [ "2019-06-27T14:36:51.22Z"
+            , "2019-06-04T00:31:05.99Z"
+            ]
+          actual = map roundtrip timestamps
+        actual `shouldEqual` (map Right result)
+      it "should parse timestamps with 3 digit millis" do
+        let
+          timestamps =
+            [ "2019-06-27T14:36:51.222Z"
+            , "2019-06-04T00:31:05.789Z"
+            ]
+          result =
+            [ "2019-06-27T14:36:51.222Z"
+            , "2019-06-04T00:31:05.789Z"
+            ]
+          actual = map roundtrip timestamps
+        actual `shouldEqual` (map Right result)
+      it "should parse timestamps with more than 3 digit millis (losing precision)" do
+        let
+          timestamps =
+            [ "2019-06-27T14:36:51.2222222Z"
+            , "2019-06-04T00:31:05.789999Z"
+            ]
+          result =
+            [ "2019-06-27T14:36:51.222Z"
+            , "2019-06-04T00:31:05.789Z"
             ]
           actual = map roundtrip timestamps
         actual `shouldEqual` (map Right result)
